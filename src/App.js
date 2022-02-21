@@ -1,51 +1,34 @@
-import React, {useState, useEffect} from 'react';
-import axios from 'axios';
-import Coin from './components/Coin'
-import './App.css'
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Header from './components/Header';
+import Homepage from './pages/Homepage';
+import CoinPage from './pages/CoinPage';
+import { makeStyles } from '@material-ui/core';
 
 function App() {
-  const [coins, setCoins] = useState([])
-  const [search, setSearch] = useState('')
+  const useStyles = makeStyles(() => ({
+    App: {
+      flex: 1,
+      backgroundColor:'#2d004d',
+      color: 'white',
+      minHeight: '10vh',
+      minWidth: '150vh'
+    },
+  }));
 
-  useEffect(() => {
-    axios
-    .get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=100&page=1&sparkline=false')
-    .then(response => {
-      setCoins(response.data)
-      console.log('data: ', coins)
-    }).catch(error => console.log(error))
-  }, [])
-
-  const handleChange = (event) => {
-    setSearch(event.target.value)
-  }
-
-  const filteredCoins = coins.filter(coin =>
-    coin.name.toLowerCase().includes(search.toLowerCase()))
+  const classes= useStyles();
 
   return (
     <div className="coin-app">
-      <div className='coin-search'>
-        <div className='coin-text'>
-          <input type='text' placeholder='Search a Currency' 
-          className='coin-input' onChange={handleChange}>
-          </input>
-        </div>
+    <BrowserRouter>
+      <div className={classes.App}>
+        <Header />
+        <Routes>
+        <Route path='/' element={<Homepage/>} exact/>
+        <Route path='/coins/:id' element={<CoinPage/>}/>
+        </Routes>
       </div>
-      {filteredCoins.map(coin => {
-        return (
-          <Coin 
-          key={coin.id} 
-          namee={coin.name} 
-          image={coin.image}
-          symbol={coin.symbol}
-          marketcap={coin.market_cap}
-          price={coin.current_price}
-          priceChange={coin.price_change_percentage_24h}
-          volume={coin.total_volume}
-          />
-        )
-      })}
+    </BrowserRouter>
     </div>
   );
 }

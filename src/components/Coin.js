@@ -19,7 +19,7 @@ const Coin = ({image, namee, symbol, price, volume, priceChange, marketcap}) => 
                     <p className='coin-percent-green'>{priceChange.toFixed(2)}%</p>
                 )}
                 <p className='coin-marketcap'>
-                    Market cap {marketcap.toLocaleString()}€
+                    {marketcap.toLocaleString()}€
                 </p>
             </div>
         </div>
