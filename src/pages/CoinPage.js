@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-import Coin from '../components/Coin'
 import { makeStyles, Typography } from '@material-ui/core'
 
 const CoinPage = () => {
@@ -83,7 +82,7 @@ const CoinPage = () => {
 
             <Typography className={classes.heading}>{coin?.name}</Typography>
             <Typography className={classes.description}>{coin?.description.en.split('.')[0]}</Typography>
-            
+
             <div className={classes.marketData}>
                 <span style={{ display: "flex" }}>
                     <Typography style={{fontSize: 20}} className={classes.heading}>
@@ -133,6 +132,6 @@ const CoinPage = () => {
         </div>
     </div>
   )
-}
+} 
 
 export default CoinPage
