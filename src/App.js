@@ -9,7 +9,7 @@ function App() {
   const useStyles = makeStyles(() => ({
     App: {
       flex: 1,
-      backgroundColor:'#2d004d',
+      backgroundColor:'#00004d',
       color: 'white',
       minHeight: '10vh',
       minWidth: '150vh'

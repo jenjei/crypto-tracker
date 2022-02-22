@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Banner from '../components/Banner'
-import Coin from '../components/Coin'
-import { createTheme, TableContainer, TableHead, TextField, ThemeProvider, Table, TableRow, TableCell, TableBody, LinearProgress } from '@material-ui/core'
-import { dark } from '@material-ui/core/styles/createPalette'
+import { createTheme, 
+    TableContainer, 
+    TableHead, 
+    TextField, 
+    ThemeProvider, 
+    Table, 
+    TableRow, 
+    TableCell, 
+    TableBody, } from '@material-ui/core'
+import { Pagination } from '@material-ui/lab'
 import { useNavigate } from 'react-router-dom'
 
 
 const Homepage = () => {
-    const [coins, setCoins] = useState([])
-    const [search, setSearch] = useState('')
+    const [coins, setCoins] = useState([]) // data
+    const [search, setSearch] = useState('') // search input
+    const [page, setPage] = useState(1) // pagination
 
     const navigate = useNavigate()
     useEffect(() => {
@@ -17,7 +25,7 @@ const Homepage = () => {
         .get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=100&page=1&sparkline=false')
         .then(response => {
           setCoins(response.data)
-          console.log('data: ', coins)
+          console.log('data: ', response.data)
         }).catch(error => console.log(error))
       }, [])
 
@@ -54,27 +62,30 @@ const Homepage = () => {
                         onChange={handleChange}/>
                     </div>
                 </div>
-
+                
                 <TableContainer >
                     <Table style={{width: '80%', marginLeft: '110px'}}>
-                        <TableHead style={{backgroundColor: '#2d004d'}}>
+                        <TableHead style={{backgroundColor: '#00004d'}}>
                             <TableRow>
-                                {['Coin', 'Price', '24h change', 'Market Cap' ].map((head) => (
+                                {['COIN', 'PRICE', '24H CHANGE', 'MARKET CAP' ].map((head) => (
                                 <TableCell
                                     style={{
                                         color: 'white',
                                         fontWeight: 600,
                                         fontFamily: 'Arial Black',
                                     }}
-                                    align={head === 'Coin' ? '' : 'right'}
+                                    align={head === 'COIN' ? '' : 'right'}
                                     key={head}>
                                     {head}
                                 </TableCell>
                                 ))} 
                             </TableRow>
                             </TableHead>
+
                             <TableBody>
-                            {filteredCoins().map(row =>{
+                            {filteredCoins()
+                            .slice((page-1)*10, (page-1)*10+10)
+                            .map(row =>{
                                 return (
                                     <TableRow onClick={() => navigate(`/coins/${row.id}`)}
                                     key={row.name}>
@@ -97,10 +108,11 @@ const Homepage = () => {
                                                 fontSize: 18,
                                                 fontFamily: 'Arial Black',
                                             }}>{row.symbol}</span>
-                                            <span>{row.name}</span>
+                                            <span
+                                            style={{fontFamily: 'Arial Black'}}>{row.name}</span>
                                         </div>
                                         </TableCell>
-                                        <TableCell align='right'>
+                                        <TableCell align='right' style={{fontFamily: 'Arial Black'}}>
                                             {row.current_price.toFixed(2)} €
                                         </TableCell>
                                         <TableCell
@@ -108,11 +120,12 @@ const Homepage = () => {
                                         style= {{
                                             color: row.price_change_percentage_24h > 0 ? 'rgb(14, 203, 129)' : 'red',
                                             fontWeight: 500,
+                                            fontFamily: 'Arial Black',
                                         }}>
                                             {row.price_change_percentage_24h.toFixed(2)}%
                                         </TableCell>
-                                        <TableCell align='right'>
-                                            {row.market_cap.toString().slice(0, -6)} M
+                                        <TableCell align='right' style={{fontFamily: 'Arial Black'}}>
+                                            {row.market_cap.toString().slice(0, -6)} M €
                                         </TableCell>
                                     </TableRow>
                                 )
@@ -120,6 +133,18 @@ const Homepage = () => {
                             </TableBody>
                     </Table>
                 </TableContainer>
+                <Pagination
+                style={{
+                    padding: 20,
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                }}
+                count={(filteredCoins()?.length/10).toFixed(0)}
+                onChange={(_, value) => {
+                    setPage(value);
+                    window.scroll(0, 100)
+                }} />
             </div>
         </ThemeProvider>
     )
